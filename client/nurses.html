@@ -4,17 +4,152 @@
   <meta charset="UTF-8">
   <title>Nurses</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #87a8d9; /* soft, eye-friendly background */
+      color: #333;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .container {
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    table th, table td {
+      vertical-align: middle;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" defer></script>
   <script src="js/app.js" defer></script>
 </head>
 <body class="p-4">
   <div class="container">
     <h1 class="mb-4">Nurses</h1>
-    <ul class="list-group" id="nurses-list"></ul>
-    <button class="btn btn-primary mt-3" onclick="fetchData('nurses','nurses-list')">Reload Nurses</button>
-    <a href="index.html" class="btn btn-secondary mt-3 ms-2">Back to Dashboard</a>
+    <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#nurseModal" onclick="openAddModal()">Add Nurse</button>
+    <input type="text" class="form-control mb-3" placeholder="Search nurses..." onkeyup="filterTable('nurses-table', this.value)">
+    <table class="table table-striped table-hover" id="nurses-table">
+      <thead class="table-dark">
+        <tr>
+          <th>E_ID</th>
+          <th>Name</th>
+          <th>Salary</th>
+          <th>State</th>
+          <th>City</th>
+          <th>Pin_No</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <a href="index.html" class="btn btn-secondary mt-3">Back to Dashboard</a>
   </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="nurseModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form id="nurseForm">
+          <div class="modal-header">
+            <h5 class="modal-title">Add Nurse</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" id="E_ID">
+            <div class="mb-3"><label>Name</label><input type="text" id="Name" class="form-control" required></div>
+            <div class="mb-3"><label>Salary</label><input type="number" id="Salary" class="form-control" required></div>
+            <div class="mb-3"><label>State</label><input type="text" id="State" class="form-control" required></div>
+            <div class="mb-3"><label>City</label><input type="text" id="City" class="form-control" required></div>
+            <div class="mb-3"><label>Pin_No</label><input type="text" id="Pin_No" class="form-control" required></div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
   <script>
-    fetchData('nurses','nurses-list');
+    let editingId = null;
+
+    async function loadNurses() {
+      const res = await fetch('http://localhost:5000/nurses');
+      const data = await res.json();
+      const tbody = document.querySelector('#nurses-table tbody');
+      tbody.innerHTML = "";
+      data.forEach(n => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${n.E_ID}</td>
+          <td>${n.Name}</td>
+          <td>₹${n.Salary}</td>
+          <td>${n.State}</td>
+          <td>${n.City}</td>
+          <td>${n.Pin_No}</td>
+          <td>
+            <button class="btn btn-sm btn-primary me-1" onclick="openEditModal(${n.E_ID})">Edit</button>
+            <button class="btn btn-sm btn-danger" onclick="deleteNurse(${n.E_ID})">Delete</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function filterTable(tableId, searchText) {
+      searchText = searchText.toLowerCase();
+      document.querySelectorAll(`#${tableId} tbody tr`).forEach(row => {
+        row.style.display = [...row.cells].some(cell => cell.textContent.toLowerCase().includes(searchText)) ? '' : 'none';
+      });
+    }
+
+    function openAddModal() {
+      editingId = null;
+      document.getElementById('nurseForm').reset();
+      document.querySelector('#nurseModal .modal-title').textContent = 'Add Nurse';
+    }
+
+    async function openEditModal(id) {
+      editingId = id;
+      const res = await fetch(`http://localhost:5000/nurses/${id}`);
+      const n = await res.json();
+      document.querySelector('#nurseModal .modal-title').textContent = 'Edit Nurse';
+      document.getElementById('E_ID').value = n.E_ID;
+      document.getElementById('Name').value = n.Name;
+      document.getElementById('Salary').value = n.Salary;
+      document.getElementById('State').value = n.State;
+      document.getElementById('City').value = n.City;
+      document.getElementById('Pin_No').value = n.Pin_No;
+      new bootstrap.Modal(document.getElementById('nurseModal')).show();
+    }
+
+    document.getElementById('nurseForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const payload = {
+        Name: document.getElementById('Name').value,
+        Salary: document.getElementById('Salary').value,
+        State: document.getElementById('State').value,
+        City: document.getElementById('City').value,
+        Pin_No: document.getElementById('Pin_No').value
+      };
+      if (editingId) {
+        await fetch(`http://localhost:5000/nurses/${editingId}`, { method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
+      } else {
+        await fetch('http://localhost:5000/nurses', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
+      }
+      bootstrap.Modal.getInstance(document.getElementById('nurseModal')).hide();
+      loadNurses();
+    });
+
+    async function deleteNurse(id) {
+      if(confirm('Are you sure?')) {
+        await fetch(`http://localhost:5000/nurses/${id}`, { method:'DELETE' });
+        loadNurses();
+      }
+    }
+
+    loadNurses();
   </script>
 </body>
 </html>

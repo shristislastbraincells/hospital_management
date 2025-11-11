@@ -4,17 +4,76 @@
   <meta charset="UTF-8">
   <title>Rooms</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #87a8d9; /* soft, eye-friendly background */
+      color: #333;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .container {
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    table th, table td {
+      vertical-align: middle;
+    }
+  </style>
   <script src="js/app.js" defer></script>
 </head>
 <body class="p-4">
   <div class="container">
     <h1 class="mb-4">Rooms</h1>
-    <ul class="list-group" id="rooms-list"></ul>
-    <button class="btn btn-primary mt-3" onclick="fetchData('rooms','rooms-list')">Reload Rooms</button>
-    <a href="index.html" class="btn btn-secondary mt-3 ms-2">Back to Dashboard</a>
+
+    <!-- Search -->
+    <input type="text" class="form-control mb-3" placeholder="Search rooms..." onkeyup="filterTable('rooms-table', this.value)">
+
+    <!-- Rooms Table -->
+    <table class="table table-striped table-hover" id="rooms-table">
+      <thead class="table-dark">
+        <tr>
+          <th>R_ID</th>
+          <th>Type</th>
+          <th>Capacity</th>
+          <th>Availability</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <a href="index.html" class="btn btn-secondary mt-3">Back to Dashboard</a>
   </div>
+
   <script>
-    fetchData('rooms','rooms-list');
+    async function loadRooms() {
+      try {
+        const res = await fetch('http://localhost:5000/rooms');
+        const data = await res.json();
+        const tbody = document.querySelector('#rooms-table tbody');
+        tbody.innerHTML = "";
+
+        data.forEach(r => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${r.R_ID}</td>
+            <td>${r.Type}</td>
+            <td>${r.Capacity}</td>
+            <td>${r.Availability}</td>
+            <td>
+              <button class="btn btn-sm btn-primary me-1">Edit</button>
+              <button class="btn btn-sm btn-danger">Delete</button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
+    loadRooms();
   </script>
 </body>
 </html>
