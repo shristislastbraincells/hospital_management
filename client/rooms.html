@@ -2,74 +2,342 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Rooms</title>
+  <title>Rooms Management</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
   <style>
     body {
-      background-color: #87a8d9; /* soft, eye-friendly background */
+      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
       color: #333;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      padding: 20px;
     }
+
     .container {
       background-color: #fff;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+      animation: fadeSlide 0.6s ease;
     }
-    table th, table td {
+
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 3px solid #2575fc;
+      padding-bottom: 10px;
+      margin-bottom: 25px;
+    }
+
+    .page-header h1 {
+      color: #2575fc;
+      font-weight: 700;
+    }
+
+    .btn-add {
+      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      color: #fff;
+      transition: all 0.3s ease;
+    }
+
+    .btn-add:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(106, 17, 203, 0.4);
+    }
+
+    .search-box {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .search-box input {
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 12px 15px 12px 40px;
+      transition: all 0.3s ease;
+    }
+
+    .search-box input:focus {
+      border-color: #2575fc;
+      box-shadow: 0 0 0 3px rgba(37, 117, 252, 0.15);
+    }
+
+    .search-box i {
+      position: absolute;
+      top: 50%;
+      left: 12px;
+      transform: translateY(-50%);
+      color: #999;
+    }
+
+    table thead {
+      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+      color: white;
+    }
+
+    table thead th {
+      border: none;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+      padding: 14px;
+    }
+
+    table tbody tr:hover {
+      background-color: #f4f6ff;
+      transition: all 0.3s ease;
+    }
+
+    table td {
+      padding: 14px;
       vertical-align: middle;
     }
+
+    .btn-sm {
+      border-radius: 6px;
+      font-size: 0.85rem;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+      border: none;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(37, 117, 252, 0.4);
+    }
+
+    .btn-danger {
+      background-color: #e74c3c;
+      border: none;
+    }
+
+    .btn-danger:hover {
+      background-color: #c0392b;
+      transform: translateY(-2px);
+    }
+
+    .btn-back {
+      margin-top: 25px;
+      background-color: #7f8c8d;
+      border: none;
+      color: white;
+      border-radius: 8px;
+      padding: 10px 25px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-back:hover {
+      background-color: #707b7c;
+      transform: translateY(-2px);
+    }
+
+    .modal-content {
+      border-radius: 15px;
+      border: none;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      animation: popIn 0.3s ease;
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .modal-header {
+      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+      color: white;
+      border-radius: 15px 15px 0 0;
+      border: none;
+    }
+
+    .form-label {
+      font-weight: 600;
+    }
+
+    .form-control {
+      border-radius: 8px;
+      border: 2px solid #e0e0e0;
+      transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+      border-color: #2575fc;
+      box-shadow: 0 0 0 3px rgba(37, 117, 252, 0.15);
+    }
+
+    .btn-submit {
+      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 25px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(37, 117, 252, 0.4);
+    }
   </style>
-  <script src="js/app.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" defer></script>
 </head>
-<body class="p-4">
+
+<body>
   <div class="container">
-    <h1 class="mb-4">Rooms</h1>
+    <div class="page-header">
+      <h1><i class="fas fa-bed"></i> Rooms Management</h1>
+      <button class="btn btn-add" data-bs-toggle="modal" data-bs-target="#roomModal" onclick="openAddModal()">
+        <i class="fas fa-plus"></i> Add Room
+      </button>
+    </div>
 
-    <!-- Search -->
-    <input type="text" class="form-control mb-3" placeholder="Search rooms..." onkeyup="filterTable('rooms-table', this.value)">
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input type="text" class="form-control" placeholder="Search rooms by type or availability..." onkeyup="filterTable('rooms-table', this.value)">
+    </div>
 
-    <!-- Rooms Table -->
-    <table class="table table-striped table-hover" id="rooms-table">
-      <thead class="table-dark">
-        <tr>
-          <th>R_ID</th>
-          <th>Type</th>
-          <th>Capacity</th>
-          <th>Availability</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+    <div class="table-responsive">
+      <table class="table table-hover" id="rooms-table">
+        <thead>
+          <tr>
+            <th>Room ID</th>
+            <th>Type</th>
+            <th>Capacity</th>
+            <th>Availability</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
 
-    <a href="index.html" class="btn btn-secondary mt-3">Back to Dashboard</a>
+    <a href="index.html" class="btn btn-back">
+      <i class="fas fa-arrow-left"></i> Back to Dashboard
+    </a>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="roomModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <form id="roomForm">
+          <div class="modal-header">
+            <h5 class="modal-title"><i class="fas fa-bed"></i> Add Room</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" id="R_ID">
+            <div class="mb-3">
+              <label class="form-label">Type</label>
+              <input type="text" id="Type" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Capacity</label>
+              <input type="number" id="Capacity" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Availability</label>
+              <select id="Availability" class="form-select" required>
+                <option value="Available">Available</option>
+                <option value="Occupied">Occupied</option>
+                <option value="Under Maintenance">Under Maintenance</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-submit"><i class="fas fa-save"></i> Save Room</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times"></i> Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 
   <script>
-    async function loadRooms() {
-      try {
-        const res = await fetch('http://localhost:5000/rooms');
-        const data = await res.json();
-        const tbody = document.querySelector('#rooms-table tbody');
-        tbody.innerHTML = "";
+    let editingId = null;
 
-        data.forEach(r => {
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td>${r.R_ID}</td>
-            <td>${r.Type}</td>
-            <td>${r.Capacity}</td>
-            <td>${r.Availability}</td>
-            <td>
-              <button class="btn btn-sm btn-primary me-1">Edit</button>
-              <button class="btn btn-sm btn-danger">Delete</button>
-            </td>
-          `;
-          tbody.appendChild(tr);
-        });
-      } catch (err) {
-        console.log(err);
+    async function loadRooms() {
+      const res = await fetch('http://localhost:5000/rooms');
+      const data = await res.json();
+      const tbody = document.querySelector('#rooms-table tbody');
+      tbody.innerHTML = "";
+      data.forEach(r => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${r.R_ID}</td>
+          <td>${r.Type}</td>
+          <td>${r.Capacity}</td>
+          <td>${r.Availability}</td>
+          <td>
+            <button class="btn btn-sm btn-primary me-1" onclick="openEditModal(${r.R_ID})">Edit</button>
+            <button class="btn btn-sm btn-danger" onclick="deleteRoom(${r.R_ID})">Delete</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function filterTable(tableId, searchText) {
+      searchText = searchText.toLowerCase();
+      document.querySelectorAll(`#${tableId} tbody tr`).forEach(row => {
+        row.style.display = [...row.cells].some(cell => cell.textContent.toLowerCase().includes(searchText)) ? '' : 'none';
+      });
+    }
+
+    function openAddModal() {
+      editingId = null;
+      document.getElementById('roomForm').reset();
+      document.querySelector('#roomModal .modal-title').textContent = 'Add Room';
+    }
+
+    async function openEditModal(id) {
+      editingId = id;
+      const res = await fetch(`http://localhost:5000/rooms/${id}`);
+      const r = await res.json();
+      document.querySelector('#roomModal .modal-title').textContent = 'Edit Room';
+      document.getElementById('R_ID').value = r.R_ID;
+      document.getElementById('Type').value = r.Type;
+      document.getElementById('Capacity').value = r.Capacity;
+      document.getElementById('Availability').value = r.Availability;
+      new bootstrap.Modal(document.getElementById('roomModal')).show();
+    }
+
+    document.getElementById('roomForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const payload = {
+        Type: document.getElementById('Type').value,
+        Capacity: document.getElementById('Capacity').value,
+        Availability: document.getElementById('Availability').value
+      };
+      if (editingId) {
+        await fetch(`http://localhost:5000/rooms/${editingId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      } else {
+        await fetch('http://localhost:5000/rooms', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      }
+      bootstrap.Modal.getInstance(document.getElementById('roomModal')).hide();
+      loadRooms();
+    });
+
+    async function deleteRoom(id) {
+      if (confirm('Are you sure you want to delete this room?')) {
+        await fetch(`http://localhost:5000/rooms/${id}`, { method: 'DELETE' });
+        loadRooms();
       }
     }
 

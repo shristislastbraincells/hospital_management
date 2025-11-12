@@ -6,79 +6,361 @@
   <title>Hospital Management Dashboard</title>
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
-    background-color: #87a8d9; /* soft light blue-gray */
-    color: #333; /* dark text for contrast */
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #333;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 20px;
     }
+
+    .dashboard-header {
+      text-align: center;
+      color: white;
+      margin-bottom: 50px;
+      animation: slideDown 0.6s ease;
+    }
+
+    .dashboard-header h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .dashboard-header p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+
     .dashboard-card {
-      transition: transform 0.2s;
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      text-align: center;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      border: none;
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
     }
+
+    .dashboard-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.5s;
+    }
+
+    .dashboard-card:hover::before {
+      left: 100%;
+    }
+
     .dashboard-card:hover {
-      transform: scale(1.05);
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-icon {
+      font-size: 3.5rem;
+      margin-bottom: 15px;
+      display: inline-block;
+      transition: transform 0.3s ease;
+    }
+
+    .dashboard-card:hover .card-icon {
+      transform: scale(1.2) rotate(-5deg);
+    }
+
+    .card-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    .card-description {
+      font-size: 0.9rem;
+      color: #666;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .dashboard-card:hover .card-description {
+      opacity: 1;
+    }
+
+    /* Color schemes for different cards */
+    .card-patients {
+      border-left: 5px solid #3498db;
+    }
+
+    .card-patients .card-icon {
+      color: #3498db;
+    }
+
+    .card-patients:hover {
+      box-shadow: 0 20px 40px rgba(52, 152, 219, 0.3);
+    }
+
+    .card-doctors {
+      border-left: 5px solid #e74c3c;
+    }
+
+    .card-doctors .card-icon {
+      color: #e74c3c;
+    }
+
+    .card-doctors:hover {
+      box-shadow: 0 20px 40px rgba(231, 76, 60, 0.3);
+    }
+
+    .card-rooms {
+      border-left: 5px solid #2ecc71;
+    }
+
+    .card-rooms .card-icon {
+      color: #2ecc71;
+    }
+
+    .card-rooms:hover {
+      box-shadow: 0 20px 40px rgba(46, 204, 113, 0.3);
+    }
+
+    .card-bills {
+      border-left: 5px solid #f39c12;
+    }
+
+    .card-bills .card-icon {
+      color: #f39c12;
+    }
+
+    .card-bills:hover {
+      box-shadow: 0 20px 40px rgba(243, 156, 18, 0.3);
+    }
+
+    .card-reports {
+      border-left: 5px solid #9b59b6;
+    }
+
+    .card-reports .card-icon {
+      color: #9b59b6;
+    }
+
+    .card-reports:hover {
+      box-shadow: 0 20px 40px rgba(155, 89, 182, 0.3);
+    }
+
+    .card-employees {
+      border-left: 5px solid #1abc9c;
+    }
+
+    .card-employees .card-icon {
+      color: #1abc9c;
+    }
+
+    .card-employees:hover {
+      box-shadow: 0 20px 40px rgba(26, 188, 156, 0.3);
+    }
+
+    .card-nurses {
+      border-left: 5px solid #e91e63;
+    }
+
+    .card-nurses .card-icon {
+      color: #e91e63;
+    }
+
+    .card-nurses:hover {
+      box-shadow: 0 20px 40px rgba(233, 30, 99, 0.3);
+    }
+
+    .card-receptionists {
+      border-left: 5px solid #00bcd4;
+    }
+
+    .card-receptionists .card-icon {
+      color: #00bcd4;
+    }
+
+    .card-receptionists:hover {
+      box-shadow: 0 20px 40px rgba(0, 188, 212, 0.3);
+    }
+
+    .cards-container {
+      animation: fadeIn 0.8s ease;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .row > div {
+      animation: fadeIn 0.8s ease;
+    }
+
+    .row > div:nth-child(1) { animation-delay: 0.1s; }
+    .row > div:nth-child(2) { animation-delay: 0.2s; }
+    .row > div:nth-child(3) { animation-delay: 0.3s; }
+    .row > div:nth-child(4) { animation-delay: 0.4s; }
+    .row > div:nth-child(5) { animation-delay: 0.5s; }
+    .row > div:nth-child(6) { animation-delay: 0.6s; }
+    .row > div:nth-child(7) { animation-delay: 0.7s; }
+    .row > div:nth-child(8) { animation-delay: 0.8s; }
+
+    a {
+      text-decoration: none !important;
+    }
+
+    @media (max-width: 768px) {
+      .dashboard-header h1 {
+        font-size: 2rem;
+      }
+
+      .card-icon {
+        font-size: 2.5rem;
+      }
+
+      .card-title {
+        font-size: 1.2rem;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="container py-5">
-    <h1 class="mb-5 text-center">Hospital Management System</h1>
-    <div class="row g-4">
-      <div class="col-md-3">
-        <a href="patients.html" class="text-decoration-none">
-          <div class="card dashboard-card text-center p-4 shadow-sm">
-            <h4>Patients</h4>
-          </div>
-        </a>
-      </div>
-      <div class="col-md-3">
-        <a href="doctors.html" class="text-decoration-none">
-          <div class="card dashboard-card text-center p-4 shadow-sm">
-            <h4>Doctors</h4>
-          </div>
-        </a>
-      </div>
-      <div class="col-md-3">
-        <a href="rooms.html" class="text-decoration-none">
-          <div class="card dashboard-card text-center p-4 shadow-sm">
-            <h4>Rooms</h4>
-          </div>
-        </a>
-      </div>
-      <div class="col-md-3">
-        <a href="bills.html" class="text-decoration-none">
-          <div class="card dashboard-card text-center p-4 shadow-sm">
-            <h4>Bills</h4>
-          </div>
-        </a>
-      </div>
-      <div class="col-md-3">
-        <a href="testReports.html" class="text-decoration-none">
-          <div class="card dashboard-card text-center p-4 shadow-sm">
-            <h4>Test Reports</h4>
-          </div>
-        </a>
-      </div>
-      <div class="col-md-3">
-        <a href="employees.html" class="text-decoration-none">
-          <div class="card dashboard-card text-center p-4 shadow-sm">
-            <h4>Employees</h4>
-          </div>
-        </a>
-      </div>
-      <div class="col-md-3">
-        <a href="nurses.html" class="text-decoration-none">
-          <div class="card dashboard-card text-center p-4 shadow-sm">
-            <h4>Nurses</h4>
-          </div>
-        </a>
-      </div>
-      <div class="col-md-3">
-        <a href="receptionists.html" class="text-decoration-none">
-          <div class="card dashboard-card text-center p-4 shadow-sm">
-            <h4>Receptionists</h4>
-          </div>
-        </a>
+  <div class="container-fluid">
+    <div class="dashboard-header">
+      <h1><i class="fas fa-hospital"></i> Hospital Management System</h1>
+      <p>Manage all hospital operations seamlessly</p>
+    </div>
+
+    <div class="cards-container">
+      <div class="row g-4">
+        <div class="col-lg-3 col-md-6">
+          <a href="patients.html">
+            <div class="card dashboard-card card-patients">
+              <div class="card-icon">
+                <i class="fas fa-users"></i>
+              </div>
+              <div class="card-title">Patients</div>
+              <div class="card-description">Manage patient records</div>
+            </div>
+          </a>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <a href="doctors.html">
+            <div class="card dashboard-card card-doctors">
+              <div class="card-icon">
+                <i class="fas fa-user-md"></i>
+              </div>
+              <div class="card-title">Doctors</div>
+              <div class="card-description">Doctor information</div>
+            </div>
+          </a>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <a href="rooms.html">
+            <div class="card dashboard-card card-rooms">
+              <div class="card-icon">
+                <i class="fas fa-door-open"></i>
+              </div>
+              <div class="card-title">Rooms</div>
+              <div class="card-description">Room availability</div>
+            </div>
+          </a>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <a href="bills.html">
+            <div class="card dashboard-card card-bills">
+              <div class="card-icon">
+                <i class="fas fa-receipt"></i>
+              </div>
+              <div class="card-title">Bills</div>
+              <div class="card-description">Billing & payments</div>
+            </div>
+          </a>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <a href="testReports.html">
+            <div class="card dashboard-card card-reports">
+              <div class="card-icon">
+                <i class="fas fa-file-medical"></i>
+              </div>
+              <div class="card-title">Test Reports</div>
+              <div class="card-description">Medical test reports</div>
+            </div>
+          </a>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <a href="employees.html">
+            <div class="card dashboard-card card-employees">
+              <div class="card-icon">
+                <i class="fas fa-id-card"></i>
+              </div>
+              <div class="card-title">Employees</div>
+              <div class="card-description">Staff management</div>
+            </div>
+          </a>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <a href="nurses.html">
+            <div class="card dashboard-card card-nurses">
+              <div class="card-icon">
+                <i class="fas fa-heart"></i>
+              </div>
+              <div class="card-title">Nurses</div>
+              <div class="card-description">Nursing staff</div>
+            </div>
+          </a>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <a href="receptionists.html">
+            <div class="card dashboard-card card-receptionists">
+              <div class="card-icon">
+                <i class="fas fa-headset"></i>
+              </div>
+              <div class="card-title">Receptionists</div>
+              <div class="card-description">Reception staff</div>
+            </div>
+          </a>
+        </div>
       </div>
     </div>
   </div>
